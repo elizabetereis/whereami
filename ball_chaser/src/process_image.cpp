@@ -64,13 +64,6 @@ void process_image_callback(const sensor_msgs::Image img)
 
   if((pixels_sum[0] + pixels_sum[1] + pixels_sum[2]) == 0)
     drive_robot(0.0, 0.0);
-  
-/*   if(pixels_sum[0] > pixels_sum[1] && pixels_sum[0] > pixels_sum[2])
-    drive_robot(0.0, 0.5);
-  else if(pixels_sum[1] > pixels_sum[0] && pixels_sum[1] > pixels_sum[2])
-    drive_robot(0.5, 0.0);
-  else if(pixels_sum[2] > pixels_sum[0] && pixels_sum[2] > pixels_sum[1])
-    drive_robot(0.0, -0.5); */
 }
 
 int main(int argc, char** argv)
