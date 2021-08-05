@@ -19,52 +19,91 @@ void drive_robot(float lin_x, float ang_z)
     ROS_ERROR("Failed to call service command_robot");
 }
 
-// This callback function continuously executes and reads the image data
 void process_image_callback(const sensor_msgs::Image img)
 {
-	const int c_white_pixel = 255;
-  std::vector<int> pixels_sum = {0, 0, 0};
-  int step_count = 0;
-  bool ball = false; 
+  int c_white_pixel = 255;
+  int left = 0, center = 0, right = 0;
+  bool ball;
+  
   for (int i = 0; i < img.height; i++)
-	{
-    for (int j = 0; j < img.width; j+=3)
+  {   
+    int row_offset = i*img.step;
+    for (int j = 0; j < img.step; j+=3)
     {
-      int base_index = j + step_count;
-      if (img.data[base_index] == c_white_pixel && img.data[base_index+1] == c_white_pixel && img.data[base_index+2] == c_white_pixel)
+      if ( (img.data[row_offset + j] == c_white_pixel) 
+          && (img.data[row_offset + j + 1] == c_white_pixel) 
+          && (img.data[row_offset + j + 2] == c_white_pixel) )
       {
-        drive_robot(0.0, 0.5);
-        pixels_sum[0]++;
+        int index = j%img.step;
         ball = true;
-        break;
-      }
-
-      base_index += img.width/3; 
-      if (img.data[base_index] == c_white_pixel && img.data[base_index+1] == c_white_pixel && img.data[base_index+2] == c_white_pixel)
-      {
-        drive_robot(0.5, 0.0);
-        pixels_sum[1]++;
-        ball = true;
-        break;
-      }
-
-      base_index += img.width/3; 
-      if (img.data[base_index] == c_white_pixel && img.data[base_index+1] == c_white_pixel && img.data[base_index+2] == c_white_pixel)
-      {
-        pixels_sum[2]++;
-        drive_robot(0.0, -0.5);
-        ball = true;
-        break;
-      }
+        if (index < img.step/3)
+          left++;
+        else if (index < img.step/3 * 2)
+          center++;
+        else
+          right++;     
+      }        
     }
-    step_count += img.step;
-    if(ball)
+
+    if (ball)
       break;
   }
 
-  if((pixels_sum[0] + pixels_sum[1] + pixels_sum[2]) == 0)
-    drive_robot(0.0, 0.0);
+  if (!ball)
+  {
+    drive_robot(0.0, 0.0); // Stop
+    return;
+  }
+  
+  if (left > center && left > right)
+    drive_robot(0.0, 0.5);
+  else if (center > left && center > right)
+    drive_robot(0.5, 0.0);
+  else
+    drive_robot(0.0, -0.5);
 }
+// This callback function continuously executes and reads the image data
+/*void process_image_callback(const sensor_msgs::Image img)
+{
+	const int c_white_pixel = 255;
+  int ball = -1;
+  int index;
+  int left = 0, center = 0, right = 0;
+  for (int i = 0; i < img.height; i++)
+  {
+    for (int j = 0; j < img.width; j++)
+    {
+      index = (i*img.height+j) * 3;
+      if (img.data[index] == c_white_pixel)
+      {
+        ball = j;
+        if (ball < img.step/3)
+          left++;
+        else if (ball > img.step * 2/3 )
+          center++;
+        else
+          right++;
+
+        break;
+      }
+    }
+    if (ball > -1)
+      break;
+  }
+
+  if (ball == -1)
+  {
+    drive_robot(0.0, 0.0);
+    return;
+  }
+
+  if (left > center && left > right)
+    drive_robot(0.0, 0.5);
+  else if (center > left && center > right)
+    drive_robot(0.5, 0.0);
+  else
+    drive_robot(0.0, -0.5);
+}*/
 
 int main(int argc, char** argv)
 {

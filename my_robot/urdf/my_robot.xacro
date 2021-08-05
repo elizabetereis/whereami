@@ -2,6 +2,14 @@
 
 <robot name="my_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
 	<xacro:include filename="$(find my_robot)/urdf/my_robot.gazebo" />
+  
+  <link name="robot_footprint"></link>
+
+  <joint name="robot_footprint_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <parent link="robot_footprint"/>
+    <child link="chassis" />
+  </joint>
 
   <gazebo reference="chassis">
     <material>Gazebo/Wood</material>
@@ -240,14 +248,14 @@
 			/>
 		</inertial>
 
-		<collision name='camera_collision'>
+		<collision name="camera_collision">
 			<origin xyz="0 0 0" rpy=" 0 0 0"/> 
 			<geometry>
 				<box size="0.05 0.05 0.05"/>
 			</geometry>
 		</collision>
 		
-    <visual name='camera_visual'>
+    <visual name="camera_visual">
       <origin xyz="0 0 0" rpy=" 0 0 0"/>
       <geometry>
         <box size="0.05 0.05 0.05"/>
