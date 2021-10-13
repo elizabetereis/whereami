@@ -1,0 +1,13 @@
+<launch>
+ <!-- The map server node -->
+  <node name="map_server" type="map_server" pkg="whereami" output="screen">
+  </node>
+
+   <!-- The amcl node -->
+  <node name="amcl" type="amcl" pkg="whereami" output="screen">
+  </node>
+
+  <!-- The move base node -->
+  <node name="move_base" type="move_base" pkg="whereami" output="screen">
+  </node>
+</launch>
