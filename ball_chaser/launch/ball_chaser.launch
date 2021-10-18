@@ -1,9 +1,0 @@
-<launch>
-
- <!-- The drive_robot node -->
-  <node name="drive_robot" type="drive_robot" pkg="ball_chaser" output="screen">
-  </node>
- <!-- The process_image node -->
-  <node name="process_image" type="process_image" pkg="ball_chaser" output="screen">
-  </node>
-</launch>
